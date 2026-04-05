@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["donor", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Organization": {
+      "title": "Organization",
+      "description": "Old age home or orphanage details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["old_age_home", "orphanage"] },
+        "description": { "type": "string" },
+        "address": { "type": "string" },
+        "contact": { "type": "string" },
+        "image_url": { "type": "string" },
+        "verified": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "type", "description", "address"]
+    },
+    "Need": {
+      "title": "Need",
+      "description": "Specific items or funds needed by an organization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orgId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string", "enum": ["food", "clothing", "medical", "education", "funds", "other"] },
+        "targetAmount": { "type": "number" },
+        "currentAmount": { "type": "number" },
+        "unit": { "type": "string" },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+        "status": { "type": "string", "enum": ["active", "fulfilled"] }
+      },
+      "required": ["orgId", "title", "category", "priority"]
+    },
+    "Donation": {
+      "title": "Donation",
+      "description": "Donation records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "donorId": { "type": "string" },
+        "orgId": { "type": "string" },
+        "needId": { "type": "string" },
+        "amount": { "type": "number" },
+        "items": { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "quantity": { "type": "number" } } } },
+        "status": { "type": "string", "enum": ["pending", "completed", "cancelled"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["donorId", "orgId", "status", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/organizations/{orgId}": {
+      "schema": "Organization",
+      "description": "Registered organizations"
+    },
+    "/organizations/{orgId}/needs/{needId}": {
+      "schema": "Need",
+      "description": "Needs for a specific organization"
+    },
+    "/donations/{donationId}": {
+      "schema": "Donation",
+      "description": "Donation records"
+    }
+  }
+}
